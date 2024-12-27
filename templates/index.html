@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osmanlıca-Türkçe Çeviri</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .key {
+            background: #f4f4f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 18px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .key:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Osmanlıca-Türkçe Çeviri</h1>
+        <form method="POST">
+            <textarea id="text-input" name="text" placeholder="Metni buraya girin...">{{ request.form['text'] if request.form.get('text') else '' }}</textarea>
+            <select name="direction">
+                <option value="to_ottoman" {% if request.form.get('direction') == 'to_ottoman' %}selected{% endif %}>Türkçe'den Osmanlıca'ya</option>
+                <option value="to_turkish" {% if request.form.get('direction') == 'to_turkish' %}selected{% endif %}>Osmanlıca'dan Türkçeye</option>
+            </select>
+            <button type="submit">Çevir</button>
+        </form>
+        {% if result %}
+        <div class="result">
+            <h2>Sonuç:</h2>
+            <p>{{ result }}</p>
+        </div>
+        {% endif %}
+        <div class="keyboard" id="keyboard">
+            <!-- JavaScript buraya harf ekleyecek -->
+        </div>
+    </div>
+    <script>
+        // Osmanlıca harfleri (29 harf)
+        const ottomanKeys = [
+            'ا', 'ب', 'ج', 'چ', 'د', 'ه', 'ف', 'گ', 'غ', 'ح',
+            'ی', 'ک', 'ل', 'م', 'ن', 'و', 'پ', 'ر', 'س', 'ش',
+            'ط', 'ز', 'ع', 'خ', 'ث', 'ذ', 'ض', 'ظ', 'ص'
+        ];
+
+        // Klavyeyi dinamik olarak oluştur
+        const keyboard = document.getElementById('keyboard');
+        ottomanKeys.forEach(key => {
+            const keyElement = document.createElement('div');
+            keyElement.classList.add('key');
+            keyElement.textContent = key;
+            keyElement.addEventListener('click', () => {
+                const textInput = document.getElementById('text-input');
+                textInput.value += key; // Harfi metin kutusuna ekle
+            });
+            keyboard.appendChild(keyElement);
+        });
+    </script>
+</body>
+</html>

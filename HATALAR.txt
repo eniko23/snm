@@ -1,0 +1,18 @@
+hemze ekle
+t
+e-h
+vav her harfi kapsıyor, çeşitlilik artacak, doğru eşleşme sağlanacak
+e lere h demeyecek sonda yuvarlak kalabilir ama aralarda elif olacak
+emre güzel bir örnekti (h harfi için)
+HEMZE
+t harfinin kullanım yerine göre değiştir
+j harfini ekleyecez ژ ekledik +++
+font değiş
+şapkalı ve farklı harfler tanımlanacak türçe - osm
+veri seti eksiklikleri
+tahmini çeviri 
+ui eksiklikleri
+ek hataları ve çoğullama
+kelime önerisi
+a ve şapkalı a aynı tanımlamaları
+
