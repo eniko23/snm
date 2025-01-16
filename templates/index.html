@@ -14,7 +14,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
         .container {
             background: #fff;
@@ -24,6 +25,7 @@
             width: 90%;
             max-width: 600px;
             text-align: center;
+            margin-top: 20px;
         }
         h1 {
             color: #4CAF50;
@@ -40,7 +42,7 @@
             margin-bottom: 20px;
             box-sizing: border-box;
         }
-        select, button {
+        select, button, input[type="file"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -77,49 +79,63 @@
         .key:hover {
             background-color: #ddd;
         }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .result, .ocr-text {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .ocr-text {
+            background: #f9fbe7;
+            border: 1px solid #f0f4c3;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Osmanlıca-Türkçe Çeviri</h1>
-        <form method="POST">
-            <textarea id="text-input" name="text" placeholder="Metni buraya girin...">{{ request.form['text'] if request.form.get('text') else '' }}</textarea>
+        <form method="POST" enctype="multipart/form-data">
+            <!-- Hata Mesajı -->
+            {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <!-- Dosya Yükleme -->
+            <input type="file" name="file" accept="image/*">
+            
+            <!-- Çeviri Yönü Seçimi -->
             <select name="direction">
                 <option value="to_ottoman" {% if request.form.get('direction') == 'to_ottoman' %}selected{% endif %}>Türkçe'den Osmanlıca'ya</option>
                 <option value="to_turkish" {% if request.form.get('direction') == 'to_turkish' %}selected{% endif %}>Osmanlıca'dan Türkçeye</option>
             </select>
+            
+            <!-- Gönder Butonu -->
             <button type="submit">Çevir</button>
         </form>
+        
+        <!-- OCR Metni -->
+        {% if ocr_text %}
+        <div class="ocr-text">
+            <h2>Okunan Metin:</h2>
+            <p>{{ ocr_text }}</p>
+        </div>
+        {% endif %}
+        
+        <!-- Çeviri Sonucu -->
         {% if result %}
         <div class="result">
-            <h2>Sonuç:</h2>
+            <h2>Çeviri Sonucu:</h2>
             <p>{{ result }}</p>
         </div>
         {% endif %}
-        <div class="keyboard" id="keyboard">
-            <!-- JavaScript buraya harf ekleyecek -->
-        </div>
     </div>
-    <script>
-        // Osmanlıca harfleri (29 harf)
-        const ottomanKeys = [
-            'ا', 'ب', 'ج', 'چ', 'د', 'ه', 'ف', 'گ', 'غ', 'ح',
-            'ی', 'ک', 'ل', 'م', 'ن', 'و', 'پ', 'ر', 'س', 'ش',
-            'ط', 'ز', 'ع', 'خ', 'ث', 'ذ', 'ض', 'ظ', 'ص'
-        ];
-
-        // Klavyeyi dinamik olarak oluştur
-        const keyboard = document.getElementById('keyboard');
-        ottomanKeys.forEach(key => {
-            const keyElement = document.createElement('div');
-            keyElement.classList.add('key');
-            keyElement.textContent = key;
-            keyElement.addEventListener('click', () => {
-                const textInput = document.getElementById('text-input');
-                textInput.value += key; // Harfi metin kutusuna ekle
-            });
-            keyboard.appendChild(keyElement);
-        });
-    </script>
 </body>
 </html>
