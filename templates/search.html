@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelime Çeviri</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            margin-top: 50px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .results {
+            text-align: left;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #f4f4f9;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="search-bar" placeholder="Kelime girin..." oninput="searchWord(this.value)">
+        <div class="results" id="results">
+            <div class="result-item">Sonuçlar burada gösterilecek.</div>
+        </div>
+    </div>
+
+    <script>
+        async function searchWord(query) {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = ''; 
+
+            if (query.trim() === '') {
+                resultsContainer.innerHTML = '<div class="result-item">Sonuçlar burada gösterilecek.</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+                const results = await response.json();
+
+                if (results.length === 0) {
+                    resultsContainer.innerHTML = '<div class="result-item">Sonuç bulunamadı.</div>';
+                    return;
+                }
+
+                results.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    resultItem.textContent = `${result.osmanlica} - ${result.turkce}`;
+                    resultsContainer.appendChild(resultItem);
+                });
+            } catch (error) {
+                resultsContainer.innerHTML = '<div class="result-item">Bir hata oluştu.</div>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -79,11 +79,6 @@
         .key:hover {
             background-color: #ddd;
         }
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
         .result, .ocr-text {
             background: #e8f5e9;
             border: 1px solid #c8e6c9;
@@ -95,47 +90,77 @@
             background: #f9fbe7;
             border: 1px solid #f0f4c3;
         }
+        .top-bar {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .top-bar button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .top-bar button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
+    <div class="top-bar">
+        <button onclick="window.location.href='/search'">Kelime Çevirisi</button>
+    </div>
     <div class="container">
         <h1>Osmanlıca-Türkçe Çeviri</h1>
         <form method="POST" enctype="multipart/form-data">
-            <!-- Hata Mesajı -->
-            {% if error %}
-            <div class="error">
-                {{ error }}
-            </div>
-            {% endif %}
-            
-            <!-- Dosya Yükleme -->
+            <textarea id="text-input" name="text" placeholder="Metni buraya girin...">{{ request.form['text'] if request.form.get('text') else '' }}</textarea>
             <input type="file" name="file" accept="image/*">
-            
-            <!-- Çeviri Yönü Seçimi -->
             <select name="direction">
                 <option value="to_ottoman" {% if request.form.get('direction') == 'to_ottoman' %}selected{% endif %}>Türkçe'den Osmanlıca'ya</option>
                 <option value="to_turkish" {% if request.form.get('direction') == 'to_turkish' %}selected{% endif %}>Osmanlıca'dan Türkçeye</option>
             </select>
-            
-            <!-- Gönder Butonu -->
             <button type="submit">Çevir</button>
         </form>
         
-        <!-- OCR Metni -->
         {% if ocr_text %}
         <div class="ocr-text">
             <h2>Okunan Metin:</h2>
             <p>{{ ocr_text }}</p>
         </div>
         {% endif %}
-        
-        <!-- Çeviri Sonucu -->
+
         {% if result %}
         <div class="result">
             <h2>Çeviri Sonucu:</h2>
             <p>{{ result }}</p>
         </div>
         {% endif %}
+        
+        <div class="keyboard" id="keyboard">
+        </div>
     </div>
+    <script>
+        const ottomanKeys = [
+            'ا', 'ب', 'ج', 'چ', 'د', 'ه', 'ف', 'گ', 'غ', 'ح',
+            'ی', 'ک', 'ل', 'م', 'ن', 'و', 'پ', 'ر', 'س', 'ش',
+            'ط', 'ز', 'ع', 'خ', 'ث', 'ذ', 'ض', 'ظ', 'ص'
+        ];
+
+        const keyboard = document.getElementById('keyboard');
+        ottomanKeys.forEach(key => {
+            const keyElement = document.createElement('div');
+            keyElement.classList.add('key');
+            keyElement.textContent = key;
+            keyElement.addEventListener('click', () => {
+                const textInput = document.getElementById('text-input');
+                textInput.value += key;
+            });
+            keyboard.appendChild(keyElement);
+        });
+    </script>
 </body>
 </html>
